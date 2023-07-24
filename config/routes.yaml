@@ -1,0 +1,4 @@
+api_post_show:
+    path:       /api/next-valid-draw-date
+    controller: App\Controller\NextDrawDayController::index
+    methods:    GET
