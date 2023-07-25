@@ -1,6 +1,16 @@
 version: '3'
 
 services:
+  database:
+    container_name: database
+    image: 'mysql:8.0'
+    volumes:
+      - database_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: scorebuddy
+    ports:
+      - '3307:3306'
   app:
     container_name: app
     build:
@@ -8,6 +18,8 @@ services:
       dockerfile: ./docker-config/Dockerfile
     ports:
       - '14000:80'
+    depends_on:
+      - database
     volumes:
       - .:/var/www/html
 

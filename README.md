@@ -28,6 +28,18 @@
 ## Example
 - Put in you postman: http://127.0.0.1:14000/api/next-valid-draw-date?date=2023-07-29T05:29:55+00:00 in GET
 
+### Connection to the database outside of docker (with fixed ports)
+
+## The credentials are:
+- user:     root
+- pasword:  password
+- database: scorebuddy
+- host:     localhost
+- port:     3307
+
+## Note:
+- If you have problems with the connections permisions you can add this param at the connection URL: ?allowPublicKeyRetrieval=true&useSSL=false
+
 
 ## Note:
 - Once the docker container has been created, please wait a few more seconds to test the application, some services take a few more seconds to deploy.

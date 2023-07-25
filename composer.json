@@ -8,6 +8,9 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/core": "^3.1",
+        "doctrine/doctrine-bundle": "^2.10",
+        "doctrine/doctrine-migrations-bundle": "^3.2",
+        "doctrine/orm": "^2.15",
         "guzzlehttp/guzzle": "^7.7",
         "nelmio/cors-bundle": "^2.3",
         "nesbot/carbon": "^2.68",
@@ -73,7 +76,8 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.3.*"
+            "require": "6.3.*",
+            "docker": false
         }
     },
     "require-dev": {
@@ -81,6 +85,7 @@
         "symfony/browser-kit": "6.3.*",
         "symfony/css-selector": "6.3.*",
         "symfony/http-client": "6.3.*",
+        "symfony/maker-bundle": "^1.50",
         "symfony/phpunit-bridge": "^6.3"
     }
 }

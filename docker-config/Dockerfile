@@ -28,6 +28,9 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     php composer-setup.php --install-dir=/usr/bin --filename=composer && \
     php -r "unlink('composer-setup.php');"
 
+# Configure cron to run the Symfony command for execute every minutes
+RUN (crontab -l ; echo "* * * * * cd /var/www/html && /usr/local/bin/php bin/console app:delete-old-records") | crontab
+
 # Set execution permission for the entrypoint script
 RUN chmod +x ./docker-config/entrypoint.sh
 

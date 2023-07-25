@@ -2,17 +2,22 @@
 
 namespace App\Service;
 
+use App\Entity\Log;
+use App\Repository\LogRepository;
 use Carbon\Carbon;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
 class NextDrawDayService
 {
 
     private $params;
+    private $logRepository;
 
-    public function __construct(ContainerBagInterface $params)
+    public function __construct(ContainerBagInterface $params, private LogRepository $logRepositor)
     {
-        $this->params = $params;
+        $this->params           = $params;
+        $this->logRepository    = $logRepositor;
     }
 
     /**
@@ -39,13 +44,17 @@ class NextDrawDayService
      * @param string $value
      * @return array
      */
-    function nextLotteryDate(string $date): array
+    function nextLotteryDate(string $date, string $source): array
     { 
         $carbonDate = Carbon::parse($date, 'UTC');
         $nextLotteryDay = $this->getNextLotteryDay($carbonDate->dayOfWeek);
         $lotteryDay =  $nextLotteryDay >= 0 ? Carbon::parse($carbonDate)->next($nextLotteryDay)->setTime(20, 0, 0) : Carbon::parse($carbonDate)->setTime(20, 0, 0);
-        $lotteryDay = $this->validateDaylightSavingTime($lotteryDay);
 
+        $data['input']  = $carbonDate->toDateTime();
+        $data['output'] = $lotteryDay->toDateTime();
+        $data['source'] = $source;
+
+        $this->logRepository->createLog($data);
         if($carbonDate->isWednesday() or $carbonDate->isSaturday()){
             return [
                 'data'      => $lotteryDay->format('Y-m-d h:i a'),
@@ -64,29 +73,6 @@ class NextDrawDayService
         }
 
     }
-    
-    /**
-     * Validate Daylight Saving Time (DST) for a given Carbon date and adjust it if necessary.
-     *
-     * @param Carbon $dateTime The Carbon date to validate and adjust for DST.
-     * @return Carbon The validated and adjusted Carbon date.
-     */
-    public function validateDaylightSavingTime(Carbon $dateTime): Carbon
-    {
-        // Get the current offset of the provided time zone
-        $currentOffset = $dateTime->offset;
-
-        // Calculate the DST offset for the date in the Europe/Dublin time zone (UTC+1 during DST, UTC+0 outside DST)
-        $dstOffset = $dateTime->copy()->subHour()->offset;
-
-        // Check if the current offset matches the DST offset
-        if ($currentOffset == $dstOffset) {
-            $dateTime->subHour(); // Subtract one hour if it's during DST
-        }
-        
-        return $dateTime;
-    }
-
 
     /**
      * @param int $value
@@ -103,4 +89,5 @@ class NextDrawDayService
         }
         return $nextLotteryDay;
     }
+
 }

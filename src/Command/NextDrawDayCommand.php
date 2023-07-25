@@ -46,7 +46,7 @@ class NextDrawDayCommand extends Command
             return Command::INVALID;
         }
 
-        $request = $this->nextDrawDayService->nextLotteryDate($requestData['date']);
+        $request = $this->nextDrawDayService->nextLotteryDate($requestData['date'], 'Console');
 
         $io->success($request);
         return Command::SUCCESS;

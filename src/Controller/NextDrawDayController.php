@@ -22,7 +22,7 @@ class NextDrawDayController extends AbstractController
         try { 
             
         $validatedData  = $exchangeRatesRequest->validated($request);
-        $result         = $service->nextLotteryDate($validatedData['date']);
+        $result         = $service->nextLotteryDate($validatedData['date'], 'API');
         return new JsonResponse(['data' => $result]);
 
         } catch (\InvalidArgumentException $e) {
