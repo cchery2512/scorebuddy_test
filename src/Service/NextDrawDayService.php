@@ -47,30 +47,27 @@ class NextDrawDayService
     function nextLotteryDate(string $date, string $source): array
     { 
         $carbonDate = Carbon::parse($date, 'UTC');
-        $nextLotteryDay = $this->getNextLotteryDay($carbonDate->dayOfWeek);
+
+        $carbonDate     = $carbonDate->setTimezone('Europe/Dublin');
+
+        $dayOfWeek      = (($carbonDate->isWednesday() or $carbonDate->isSaturday()) && intval($carbonDate->format('H')) <= 20) ? $carbonDate->dayOfWeek : $carbonDate->dayOfWeek +1; 
+
+        $nextLotteryDay = $this->getNextLotteryDay($dayOfWeek);
         $lotteryDay =  $nextLotteryDay >= 0 ? Carbon::parse($carbonDate)->next($nextLotteryDay)->setTime(20, 0, 0) : Carbon::parse($carbonDate)->setTime(20, 0, 0);
+        
+        $carbonDate = $carbonDate->setTimezone('UTC');
+        $lotteryDay = $lotteryDay->setTimezone('UTC');
 
         $data['input']  = $carbonDate->toDateTime();
         $data['output'] = $lotteryDay->toDateTime();
         $data['source'] = $source;
 
         $this->logRepository->createLog($data);
-        if($carbonDate->isWednesday() or $carbonDate->isSaturday()){
-            return [
-                'data'      => $lotteryDay->format('Y-m-d h:i a'),
-                'message'   => 'The next draw date go to be today at: ' . $lotteryDay->format('h:i a') 
-            ];
-        }else if($carbonDate->isTuesday() or $carbonDate->isFriday()){
-            return [
-                'data'      => $lotteryDay->format('Y-m-d h:i a'),
-                'message'   => 'The next draw date go to be tomorrow at: ' . $lotteryDay->format('h:i a') 
-            ];
-        }else{
-            return [
-                'data'      => $lotteryDay->format('Y-m-d h:i a'),
-                'message'   => 'The next draw date go to be the next ' . $lotteryDay->dayName .' at: ' . $lotteryDay->format('h:i a') 
-            ];
-        }
+
+        return [
+            'data'      => $lotteryDay->format('Y-m-d h:i a'),
+            'message'   => $this->getMessage($carbonDate, $lotteryDay)
+        ];
 
     }
 
@@ -89,5 +86,22 @@ class NextDrawDayService
         }
         return $nextLotteryDay;
     }
+
+    /**
+     * @param Carbon $value
+     * @return string
+     */
+
+     public function getMessage(Carbon $carbonDate, Carbon $lotteryDay): string{
+        $carbonDate     = $carbonDate->setTimezone('Europe/Dublin');
+        if(($carbonDate->isWednesday() or $carbonDate->isSaturday()) && intval($carbonDate->format('H')) <= 20){
+            $message =  'The next draw date go to be today at: ' . $lotteryDay->format('h:i a'); 
+        }else if($carbonDate->isTuesday() or $carbonDate->isFriday()){
+            $message =  'The next draw date go to be tomorrow at: ' . $lotteryDay->format('h:i a');
+        }else{
+            $message =  'The next draw date go to be the next ' . $lotteryDay->dayName .' at: ' . $lotteryDay->format('h:i a');
+        }
+        return $message;
+     }
 
 }
