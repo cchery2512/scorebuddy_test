@@ -2,10 +2,8 @@
 
 namespace App\Service;
 
-use App\Entity\Log;
 use App\Repository\LogRepository;
 use Carbon\Carbon;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
 class NextDrawDayService

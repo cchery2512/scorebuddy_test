@@ -3,7 +3,7 @@
 - Install Docker
 
 ## For run the application write this command in the console:
-- docker-compose build && docker-compose up -d
+- docker compose build && docker compose up -d
 
 ## Important: the port of the application is the 14000 => http://127.0.0.1:14000
 
@@ -15,7 +15,7 @@
 - app:next:valid:draw:date [date] (OPTIONAL)
 
 ## Example
-- Run command: docker-compose exec app php bin/console app:next:valid:draw:date 2023-07-29T05:29:55+00:00
+- Run command: docker compose exec app php bin/console app:next:valid:draw:date 2023-07-29T05:29:55+00:00
 
 
 ### Run the 'next-valid-draw-date' API
